@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 2.8.3)
 project(hdl_people_tracking)
 
 # -mavx causes a lot of errors!!
-add_definitions(-std=c++11 -msse -msse2 -msse3 -msse4 -msse4.1 -msse4.2)
-set(CMAKE_CXX_FLAGS "-std=c++11 -msse -msse2 -msse3 -msse4 -msse4.1 -msse4.2")
+add_definitions(-std=c++14 -msse -msse2 -msse3 -msse4 -msse4.1 -msse4.2)
+set(CMAKE_CXX_FLAGS "-std=c++14 -msse -msse2 -msse3 -msse4 -msse4.1 -msse4.2")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 # pcl 1.7 causes a segfault when it is built with debug mode
@@ -34,6 +34,8 @@ add_message_files(FILES
   ClusterArray.msg
   Track.msg
   TrackArray.msg
+  ExtendedTrack.msg
+  ExtendedTrackArray.msg
 )
 
 generate_messages(DEPENDENCIES std_msgs geometry_msgs)
@@ -83,6 +85,9 @@ add_dependencies(hdl_people_tracking_nodelet hdl_people_tracking_gencpp)
 # for customized "from global to local frame tracking"
 ###################
 add_executable(relative_track_transformer src/relative_track_transformer.cpp)
-target_link_libraries(relative_track_transformer ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${PCL_LIBRARIES})
-add_dependencies(relative_track_transformer hdl_people_tracking_gencpp ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(relative_track_transformer ${catkin_LIBRARIES} 
+  ${OpenCV_LIBRARIES}
+  ${PCL_LIBRARIES}
+)
+add_dependencies(relative_track_transformer ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} hdl_people_tracking_gencpp)
 
